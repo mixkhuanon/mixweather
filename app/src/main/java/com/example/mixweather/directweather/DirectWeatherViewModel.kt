@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixweather.data.model.DirectWeatherResponseModel
 import com.example.mixweather.data.model.LocationResponseModel
+import com.example.mixweather.directweather.DirectWeatherFragment.Companion.ZERO_CONST
 import com.example.mixweather.domain.GetDirectWeatherUseCase
 import com.example.mixweather.domain.GetLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +38,7 @@ class DirectWeatherViewModel @Inject constructor(
     val connectionLost: LiveData<Unit>
         get() = _connectionLost
 
-    var directDegree: Double = 0.0
+    var directDegree: Double = ZERO_CONST
 
     fun getLocation(city: String) {
         viewModelScope.launch(Dispatchers.IO) {

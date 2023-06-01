@@ -53,7 +53,7 @@ class DirectWeatherFragment : Fragment() {
             }
         }
         viewModel.directWeather.observe(viewLifecycleOwner) {
-            viewModel.directDegree = it.main?.temp ?: 0.0
+            viewModel.directDegree = it.main?.temp ?: ZERO_CONST
             showDirectDegree()
         }
         viewModel.connectionLost.observe(viewLifecycleOwner) {
@@ -91,5 +91,9 @@ class DirectWeatherFragment : Fragment() {
     private fun showDirectDegree() {
         val degree = String.format("%.2f", viewModel.directDegree) + getString(R.string.degrees)
         binding?.temp?.text = degree
+    }
+
+    companion object {
+        const val ZERO_CONST = 0.0
     }
 }
