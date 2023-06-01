@@ -53,8 +53,11 @@ class DirectWeatherFragment : Fragment() {
             }
         }
         viewModel.directWeather.observe(viewLifecycleOwner) {
-            viewModel.directDegree = it.main?.temp ?: ZERO_CONST
-            showDirectDegree()
+            it.main?.let { main ->
+                showHumidity(main.humidity.toString())
+                viewModel.directDegree = main.temp ?: ZERO_CONST
+                showDirectDegree()
+            }
         }
         viewModel.connectionLost.observe(viewLifecycleOwner) {
             Toast.makeText(context, "Connection Lost", Toast.LENGTH_SHORT).show()
@@ -91,6 +94,11 @@ class DirectWeatherFragment : Fragment() {
     private fun showDirectDegree() {
         val degree = String.format("%.2f", viewModel.directDegree) + getString(R.string.degrees)
         binding?.temp?.text = degree
+    }
+
+    private fun showHumidity(humidity: String) {
+        val humidityText = "Humidity is $humidity"
+        binding?.humidity?.text = humidityText
     }
 
     companion object {

@@ -62,7 +62,10 @@ class DirectWeatherViewModel @Inject constructor(
             try {
                 getDirectWeatherUseCase.execute(lat, lon).let { response ->
                     if (response.isSuccessful) {
-                        _directWeather.postValue(response.body())
+                        if (response.body()?.id.toString().isNotEmpty())
+                            _directWeather.postValue(response.body())
+                    } else {
+                        _onLocationError.postValue(Unit)
                     }
                 }
             } catch (e: Exception) {
