@@ -37,6 +37,8 @@ class DirectWeatherViewModel @Inject constructor(
     val connectionLost: LiveData<Unit>
         get() = _connectionLost
 
+    var directDegree: Double = 0.0
+
     fun getLocation(city: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

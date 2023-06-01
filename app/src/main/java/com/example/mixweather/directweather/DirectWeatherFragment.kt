@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.mixweather.R
 import com.example.mixweather.databinding.FragmentDirectWeatherBinding
+import com.example.mixweather.utils.Extensions.toCelsius
+import com.example.mixweather.utils.Extensions.toFahrenheit
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,12 +48,13 @@ class DirectWeatherFragment : Fragment() {
     private fun observable() {
         viewModel.location.observe(viewLifecycleOwner) {
             it.first().apply {
-                binding?.location?.text = state.toString()
+                binding?.location?.text = name.toString()
                 viewModel.getDirectWeather(lat, lon)
             }
         }
         viewModel.directWeather.observe(viewLifecycleOwner) {
-            binding?.temp?.text = it.main?.temp.toString()
+            viewModel.directDegree = it.main?.temp ?: 0.0
+            showDirectDegree()
         }
         viewModel.connectionLost.observe(viewLifecycleOwner) {
             Toast.makeText(context, "Connection Lost", Toast.LENGTH_SHORT).show()
@@ -65,5 +70,26 @@ class DirectWeatherFragment : Fragment() {
             binding?.searchEdittext?.clearFocus()
             viewModel.getLocation(searchText)
         }
+        binding?.searchEdittext?.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding?.searchEdittext?.clearFocus()
+                viewModel.getLocation(binding?.searchEdittext?.text.toString())
+                binding?.toggleDegree?.visibility = View.VISIBLE
+            }
+            return@setOnEditorActionListener false
+        }
+        binding?.toggleDegree?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.directDegree = viewModel.directDegree.toFahrenheit()
+            } else {
+                viewModel.directDegree = viewModel.directDegree.toCelsius()
+            }
+            showDirectDegree()
+        }
+    }
+
+    private fun showDirectDegree() {
+        val degree = String.format("%.2f", viewModel.directDegree) + getString(R.string.degrees)
+        binding?.temp?.text = degree
     }
 }

@@ -22,6 +22,7 @@ interface WeatherApi {
     suspend fun getDirectWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
+        @Query("units") unit: String = "metric",
         @Query("appid") apiKey: String = BuildConfig.API_KEY
     ): Response<DirectWeatherResponseModel>
 }
