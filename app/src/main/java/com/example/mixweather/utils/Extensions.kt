@@ -1,18 +1,17 @@
 package com.example.mixweather.utils
 
-import android.annotation.SuppressLint
-import java.text.SimpleDateFormat
-import java.util.Date
+import android.text.format.DateFormat
+import java.util.Calendar
+import java.util.Locale
 
 object Extensions {
 
     fun Double.toFahrenheit(): Double = ((this * 9 / 5) + 32)
     fun Double.toCelsius(): Double = ((this - 32) * 5 / 9)
 
-    @SuppressLint("SimpleDateFormat")
-    fun convertToDateTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat("yyyy/MM/dd \nHH:mm")
-        return format.format(date)
+    fun dateTimeFormatter(timestamp: Long): String {
+        val calendar = Calendar.getInstance(Locale.ENGLISH)
+        calendar.timeInMillis = timestamp * 1000L
+        return DateFormat.format("dd-MM-yyyy", calendar).toString()
     }
 }
