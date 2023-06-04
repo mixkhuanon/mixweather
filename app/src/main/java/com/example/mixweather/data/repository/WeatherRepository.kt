@@ -2,6 +2,7 @@ package com.example.mixweather.data.repository
 
 import com.example.mixweather.data.api.WeatherApi
 import com.example.mixweather.data.model.DirectWeatherResponseModel
+import com.example.mixweather.data.model.ForecastWeatherResponseModel
 import com.example.mixweather.data.model.LocationResponseModel
 import retrofit2.Response
 import javax.inject.Inject
@@ -19,5 +20,12 @@ class WeatherRepository @Inject constructor(
         lon: Double
     ): Response<DirectWeatherResponseModel> {
         return weatherApi.getDirectWeather(lat, lon)
+    }
+
+    override suspend fun getForecastWeather(
+        lat: Double,
+        lon: Double
+    ): Response<ForecastWeatherResponseModel> {
+        return weatherApi.getForecastWeather(lat, lon)
     }
 }

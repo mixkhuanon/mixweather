@@ -2,6 +2,7 @@ package com.example.mixweather.di
 
 import com.example.mixweather.data.repository.WeatherRepository
 import com.example.mixweather.domain.GetDirectWeatherUseCase
+import com.example.mixweather.domain.GetForecastWeatherUseCase
 import com.example.mixweather.domain.GetLocationUseCase
 import dagger.Module
 import dagger.Provides
@@ -24,5 +25,12 @@ class UseCaseModule {
         weatherRepository: WeatherRepository
     ): GetDirectWeatherUseCase {
         return GetDirectWeatherUseCase(weatherRepository)
+    }
+
+    @Provides
+    fun provideGetForecastWeatherUseCase(
+        weatherRepository: WeatherRepository
+    ): GetForecastWeatherUseCase {
+        return GetForecastWeatherUseCase(weatherRepository)
     }
 }
