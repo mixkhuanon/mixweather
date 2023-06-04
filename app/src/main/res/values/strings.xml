@@ -5,4 +5,6 @@
     <string name="degrees_celsius">°C</string>
     <string name="degrees_fahrenheit">°F</string>
     <string name="degrees">°</string>
+    <string name="btn_forecast">Forecast Weather</string>
+    <string name="btn_back_press">Back</string>
 </resources>

@@ -8,8 +8,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.mixweather.R
+import com.example.mixweather.data.model.directweather.Coord
 import com.example.mixweather.databinding.FragmentDirectWeatherBinding
+import com.example.mixweather.utils.Extensions.dateTimeFormatter
 import com.example.mixweather.utils.Extensions.toCelsius
 import com.example.mixweather.utils.Extensions.toFahrenheit
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,31 +42,30 @@ class DirectWeatherFragment : Fragment() {
         observable()
         initListener()
     }
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
     private fun observable() {
         viewModel.location.observe(viewLifecycleOwner) {
             it.first().apply {
                 binding?.location?.text = name.toString()
                 viewModel.getDirectWeather(lat, lon)
+                viewModel.coord = Coord(lat, lon)
             }
         }
         viewModel.directWeather.observe(viewLifecycleOwner) {
             it.main?.let { main ->
-                showHumidity(main.humidity.toString())
-                viewModel.directDegree = main.temp ?: ZERO_CONST
-                showDirectDegree()
+                if (main.temp.toString().isNotEmpty()) {
+                    viewModel.directDegree = main.temp ?: ZERO_CONST
+                    binding?.dateTime?.text = dateTimeFormatter(it?.dt ?: 0)
+                    showHumidity(main.humidity.toString())
+                    showDirectDegree()
+                    showButton()
+                }
             }
         }
         viewModel.connectionLost.observe(viewLifecycleOwner) {
-            Toast.makeText(context, "Connection Lost", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Something went wrong.", Toast.LENGTH_SHORT).show()
         }
         viewModel.onLocationError.observe(viewLifecycleOwner) {
-            Toast.makeText(context, "Not found this location", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Not found this location.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -77,7 +79,6 @@ class DirectWeatherFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 binding?.searchEdittext?.clearFocus()
                 viewModel.getLocation(binding?.searchEdittext?.text.toString())
-                binding?.toggleDegree?.visibility = View.VISIBLE
             }
             return@setOnEditorActionListener false
         }
@@ -89,6 +90,21 @@ class DirectWeatherFragment : Fragment() {
             }
             showDirectDegree()
         }
+        binding?.buttonForecast?.setOnClickListener {
+            viewModel.coord.apply {
+                findNavController().navigate(
+                    DirectWeatherFragmentDirections.toForecastWeatherFragment(
+                        lat = lat.toString(),
+                        lon = lon.toString()
+                    )
+                )
+            }
+        }
+    }
+
+    private fun showButton() {
+        binding?.toggleDegree?.visibility = View.VISIBLE
+        binding?.buttonForecast?.visibility = View.VISIBLE
     }
 
     private fun showDirectDegree() {

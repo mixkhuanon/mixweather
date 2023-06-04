@@ -8,6 +8,23 @@
     <fragment
         android:id="@+id/directWeatherFragment"
         android:name="com.example.mixweather.directweather.DirectWeatherFragment"
-        android:label="fragment_direct_weather"
-        tools:layout="@layout/fragment_direct_weather" />
+        android:label="Direct Weather"
+        tools:layout="@layout/fragment_direct_weather">
+        <action
+            android:id="@+id/toForecastWeatherFragment"
+            app:destination="@id/forecastWeatherFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forecastWeatherFragment"
+        android:name="com.example.mixweather.forecastweather.ForecastWeatherFragment"
+        android:label="Forecast Weather"
+        tools:layout="@layout/fragment_forecast_weather">
+        <argument
+            android:name="lat"
+            app:argType="string" />
+        <argument
+            android:name="lon"
+            app:argType="string" />
+    </fragment>
 </navigation>

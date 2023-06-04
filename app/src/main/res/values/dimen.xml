@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_empty">0dp</dimen>
+    <dimen name="spacing_twenty">20dp</dimen>
+    <dimen name="spacing_sixty">60dp</dimen>
+    <dimen name="spacing_seventy_five">75dp</dimen>
+    <dimen name="spacing_hundred">100dp</dimen>
+</resources>

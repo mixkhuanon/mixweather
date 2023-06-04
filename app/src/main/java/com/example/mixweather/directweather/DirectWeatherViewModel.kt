@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixweather.data.model.DirectWeatherResponseModel
 import com.example.mixweather.data.model.LocationResponseModel
+import com.example.mixweather.data.model.directweather.Coord
 import com.example.mixweather.directweather.DirectWeatherFragment.Companion.ZERO_CONST
 import com.example.mixweather.domain.GetDirectWeatherUseCase
 import com.example.mixweather.domain.GetLocationUseCase
@@ -40,6 +41,8 @@ class DirectWeatherViewModel @Inject constructor(
 
     var directDegree: Double = ZERO_CONST
 
+    var coord: Coord = Coord()
+
     fun getLocation(city: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -47,6 +50,9 @@ class DirectWeatherViewModel @Inject constructor(
                     if (response.isSuccessful) {
                         if (response.body()?.isNotEmpty() == true)
                             _location.postValue(response.body())
+                        else {
+                            _onLocationError.postValue(Unit)
+                        }
                     } else {
                         _onLocationError.postValue(Unit)
                     }

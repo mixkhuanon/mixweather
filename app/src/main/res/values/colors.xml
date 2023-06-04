@@ -5,4 +5,5 @@
     <color name="red">#FF0000</color>
     <color name="purple">#cdbbfc</color>
     <color name="dark_purple">#352264</color>
+    <color name="light_purple">#E6DCFF</color>
 </resources>
