@@ -12,4 +12,4 @@ https://github.com/mixkhuanon/mixweather/assets/82725958/dce06c4b-4482-41e9-a586
 
 
 # Expected to improve
-- You can forecast by day whatever you want by change "cnt" in request of API forecast weather to valiable, you can set ะhe number you want will be displayed.
+- You can forecast by day whatever you want by change "cnt" in request of API forecast weather to valiable, you can set the number you want will be displayed.
