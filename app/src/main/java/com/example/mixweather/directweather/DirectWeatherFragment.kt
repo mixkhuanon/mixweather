@@ -13,6 +13,7 @@ import com.example.mixweather.R
 import com.example.mixweather.data.model.directweather.Coord
 import com.example.mixweather.databinding.FragmentDirectWeatherBinding
 import com.example.mixweather.utils.Extensions.dateTimeFormatter
+import com.example.mixweather.utils.Extensions.isNetworkAvailable
 import com.example.mixweather.utils.Extensions.toCelsius
 import com.example.mixweather.utils.Extensions.toFahrenheit
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,23 +46,31 @@ class DirectWeatherFragment : Fragment() {
     private fun observable() {
         viewModel.location.observe(viewLifecycleOwner) {
             it.first().apply {
-                binding?.location?.text = name.toString()
-                viewModel.getDirectWeather(lat, lon)
-                viewModel.coord = Coord(lat, lon)
+                if (isNetworkAvailable(context)) {
+                    binding?.location?.text = name.toString()
+                    viewModel.getDirectWeather(lat, lon)
+                    viewModel.coord = Coord(lat, lon)
+                } else {
+                    showConnectionException()
+                }
             }
         }
         viewModel.directWeather.observe(viewLifecycleOwner) {
             it.main?.let { main ->
                 if (main.temp.toString().isNotEmpty()) {
-                    viewModel.directDegree = main.temp ?: ZERO_CONST
-                    binding?.dateTime?.text = dateTimeFormatter(it?.dt ?: 0)
-                    showHumidity(main.humidity.toString())
-                    showDirectDegree()
-                    showButton()
+                    if (isNetworkAvailable(context)) {
+                        viewModel.directDegree = main.temp ?: ZERO_CONST
+                        binding?.dateTime?.text = dateTimeFormatter(it?.dt ?: 0)
+                        showHumidity(main.humidity.toString())
+                        showDirectDegree()
+                        showButton()
+                    } else {
+                        showConnectionException()
+                    }
                 }
             }
         }
-        viewModel.connectionLost.observe(viewLifecycleOwner) {
+        viewModel.onError.observe(viewLifecycleOwner) {
             Toast.makeText(context, "Something went wrong.", Toast.LENGTH_SHORT).show()
         }
         viewModel.onLocationError.observe(viewLifecycleOwner) {
@@ -73,12 +82,20 @@ class DirectWeatherFragment : Fragment() {
         binding?.buttonSearch?.setOnClickListener {
             val searchText = binding?.searchEdittext?.text.toString()
             binding?.searchEdittext?.clearFocus()
-            viewModel.getLocation(searchText)
+            if (isNetworkAvailable(context)) {
+                viewModel.getLocation(searchText)
+            } else {
+                showConnectionException()
+            }
         }
         binding?.searchEdittext?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 binding?.searchEdittext?.clearFocus()
-                viewModel.getLocation(binding?.searchEdittext?.text.toString())
+                if (isNetworkAvailable(context)) {
+                    viewModel.getLocation(binding?.searchEdittext?.text.toString())
+                } else {
+                    showConnectionException()
+                }
             }
             return@setOnEditorActionListener false
         }
@@ -115,6 +132,10 @@ class DirectWeatherFragment : Fragment() {
     private fun showHumidity(humidity: String) {
         val humidityText = "Humidity is $humidity"
         binding?.humidity?.text = humidityText
+    }
+
+    private fun showConnectionException() {
+        Toast.makeText(context, "No internet connection.", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

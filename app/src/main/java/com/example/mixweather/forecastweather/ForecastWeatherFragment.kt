@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.mixweather.databinding.FragmentForecastWeatherBinding
 import com.example.mixweather.forecastweather.adapter.ForecastWeatherListAdapter
+import com.example.mixweather.utils.Extensions.isNetworkAvailable
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -57,7 +58,11 @@ class ForecastWeatherFragment : Fragment() {
                     lon = args.lon.toDouble()
                 }
             }
-            viewModel.getForecastWeather()
+            if (isNetworkAvailable(context)) {
+                viewModel.getForecastWeather()
+            } else {
+                showConnectionException()
+            }
         }
     }
 
@@ -66,7 +71,7 @@ class ForecastWeatherFragment : Fragment() {
             binding?.recycleViewForecastWeather?.rootView?.visibility = View.VISIBLE
             forecastWeatherListAdapter.submitList(it.list)
         }
-        viewModel.connectionLost.observe(viewLifecycleOwner) {
+        viewModel.onError.observe(viewLifecycleOwner) {
             Toast.makeText(context, "Something went wrong.", Toast.LENGTH_SHORT).show()
         }
         viewModel.onForecastWeatherError.observe(viewLifecycleOwner) {
@@ -78,5 +83,9 @@ class ForecastWeatherFragment : Fragment() {
         binding?.buttonBack?.setOnClickListener {
             activity?.onBackPressed()
         }
+    }
+
+    private fun showConnectionException() {
+        Toast.makeText(context, "No internet connection.", Toast.LENGTH_SHORT).show()
     }
 }

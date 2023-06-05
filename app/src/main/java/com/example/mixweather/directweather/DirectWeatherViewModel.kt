@@ -35,9 +35,9 @@ class DirectWeatherViewModel @Inject constructor(
     val onLocationError: LiveData<Unit>
         get() = _onLocationError
 
-    private val _connectionLost: MutableLiveData<Unit> = MutableLiveData()
-    val connectionLost: LiveData<Unit>
-        get() = _connectionLost
+    private val _onError: MutableLiveData<Unit> = MutableLiveData()
+    val onError: LiveData<Unit>
+        get() = _onError
 
     var directDegree: Double = ZERO_CONST
 
@@ -58,7 +58,7 @@ class DirectWeatherViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _connectionLost.postValue(Unit)
+                _onError.postValue(Unit)
             }
         }
     }
@@ -75,7 +75,7 @@ class DirectWeatherViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _connectionLost.postValue(Unit)
+                _onError.postValue(Unit)
             }
         }
     }

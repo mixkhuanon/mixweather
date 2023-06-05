@@ -28,9 +28,9 @@ class ForecastWeatherViewModel @Inject constructor(
     val onForecastWeatherError: LiveData<Unit>
         get() = _onForecastWeatherError
 
-    private val _connectionLost: MutableLiveData<Unit> = MutableLiveData()
-    val connectionLost: LiveData<Unit>
-        get() = _connectionLost
+    private val _onError: MutableLiveData<Unit> = MutableLiveData()
+    val onError: LiveData<Unit>
+        get() = _onError
 
     fun getForecastWeather() {
         coord?.let {
@@ -47,7 +47,7 @@ class ForecastWeatherViewModel @Inject constructor(
                         }
                     }
                 } catch (e: Exception) {
-                    _connectionLost.postValue(Unit)
+                    _onError.postValue(Unit)
                 }
             }
         }
